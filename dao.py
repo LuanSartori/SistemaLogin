@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model import Usuario
+from utils import ServerError
 
 
 class BancoDados():
@@ -13,8 +14,11 @@ class BancoDados():
         PORT = 3306
         CONN = f'mysql+pymysql://{USUARIO}:{SENHA}@{HOST}:{PORT}/{BANCO}'
 
-        Session = sessionmaker(bind=create_engine(CONN, echo=False))
-        return Session()
+        try:
+            Session = sessionmaker(bind=create_engine(CONN, echo=False))
+            return Session()
+        except:
+            raise ServerError('Não possível acessar o servidor!')
 
 
 class UsuarioDao(BancoDados):
@@ -26,20 +30,29 @@ class UsuarioDao(BancoDados):
         Returns:
             list: Uma lista com instâncias de `Usuario` filtrada do banco de dados
         """
-        return session.query(Usuario).filter_by(**kwargs).all()
+        try:
+            return session.query(Usuario).filter_by(**kwargs).all()
+        except:
+            raise ServerError('Não foi possível acessar o servidor!')
 
 
     @staticmethod
     def fazer_cadastro(session, *usuarios: Usuario):
-        session.add_all(usuarios)
-        session.commit()
+        try:
+            session.add_all(*usuarios)
+            session.commit()
+        except:
+            raise ServerError('Não foi possível acessar o servidor!')
 
 
     @staticmethod
-    def redefinir_senha(session, id_usuario: int, nova_senha: str):
-        x = UsuarioDao.ler_dados(session, id=id_usuario)[0]
-        x.senha = nova_senha
-        session.commit()
+    def redefinir_senha(session, email_usuario: int, nova_senha: str):
+        try:
+            x = UsuarioDao.ler_dados(session, email=email_usuario)[0]
+            x.senha = nova_senha
+            session.commit()
+        except:
+            raise ServerError('Não foi possível acessar o servidor!')
 
 
 if __name__ == '__main__':
