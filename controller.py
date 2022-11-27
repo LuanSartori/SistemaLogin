@@ -5,18 +5,18 @@ from utils import *
 
 class UsuarioController():
     @staticmethod
-    def fazer_cadastro(nome: str, email: str, senha: str):
+    def fazer_cadastro(nome: str, email: str, senha: str) -> True:
         session = UsuarioDao.retorna_session()
 
         if 2 >= len(nome) > 50:
-            raise ValueError('O nome deve ter entre 2 e 50 caracteres!')
+            raise ValueError('RAISE', 'O nome deve ter entre 2 e 50 caracteres!')
         
         if not email_valido(email):
-            raise ValueError('Email inválido!')
+            raise ValueError('RAISE', 'Email inválido!')
         
         verifica_senha = senha_valida(senha)
         if verifica_senha != True:
-            raise ValueError(verifica_senha)
+            raise ValueError('RAISE', verifica_senha)
         senha = hash_senha(senha, decode=True)
 
         usuario = Usuario(nome=nome, email=email, senha=senha)
@@ -28,13 +28,16 @@ class UsuarioController():
     def fazer_login(email: str, senha: str) -> Login:
         session = UsuarioDao.retorna_session()
 
+        if not email_valido(email):
+            raise ValueError('RAISE', 'Email inválido!')
+
         usuario = UsuarioDao.ler_dados(session, email=email)
         if not usuario:
-            raise ValueError('Este email não está cadastrado!')
+            raise ValueError('RAISE', 'Este email não está cadastrado!')
         usuario = usuario[0]
         
         if not comparar_senha(senha.encode('utf-8'), usuario.senha.encode('utf-8')):
-            raise ValueError('Senha incorreta!')
+            raise ValueError('RAISE', 'Senha incorreta!')
         
         return Login(usuario.nome, usuario.email)
     
@@ -52,7 +55,7 @@ class UsuarioController():
 
         verifica_senha = senha_valida(nova_senha)
         if verifica_senha != True:
-            raise ValueError(verifica_senha)
+            raise ValueError('RAISE', verifica_senha)
         nova_senha = hash_senha(nova_senha, decode=True)
 
         UsuarioDao.redefinir_senha(session, email_usuario, nova_senha)

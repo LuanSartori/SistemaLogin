@@ -75,3 +75,53 @@ def comparar_senha(senha_1: str, senha_2: str) -> bool:
         True se as duas senhas forem iguais, senão False
     """
     return bcrypt.checkpw(senha_1, senha_2)
+
+
+# --------------------------------------------------
+
+
+def cor(**kwargs) -> str:
+    formatacao = {
+            None: '0', 'nenhuma': '0', 'negrito': '1',
+            'sublinhado': '4', 'negativo': '7'
+            }
+    texto = {
+        None: '', 'branco': '30', 'vermelho': '31',
+        'verde': '32', 'amarelo': '33', 'azul': '34',
+        'roxo': '35', 'ciano': '36', 'cinza': '37'
+        }
+    fundo = {
+        None: '', 'branco': '40', 'vermelho': '41',
+        'verde': '42', 'amarelo': '43', 'azul': '44',
+        'roxo': '45', 'ciano': '46', 'cinza': '47'
+        }
+    if kwargs.get('limpa'):
+        return '\033[m'
+    return f'\033[{formatacao[kwargs.get("formatacao")]};{texto[kwargs.get("texto")]};{fundo[kwargs.get("fundo")]}m'.replace(';;m', 'm').replace(';m', 'm')
+
+
+def titulo(txt: str, decorador: str='=', comprimento: int=None,
+           recuo: int=4, justificar: bool=False, **kwargs):
+    """
+    Printa um título decorado na tela, no formato::
+
+        ===========
+            Olá
+        ===========
+    
+    ---
+
+    Args:
+        txt (str): título a ser exibido
+        decorador (str): símbolo que vai ficar em cima e abaixo do título. default= '='
+        comprimento (int): comprimento do decorador. Caso não passado é o `len` do título. default=None
+        recuo (int): espaço do título até o começo da linha. default=4
+        justificar_recuo (bool): deixa o título no meio bem no meio do comprimento do decorador. default=False
+        **kwargs: parâmetros para função `cor`
+    """
+    
+    print(cor(**kwargs), end='')
+    print(decorador * (comprimento if comprimento else len(txt) + recuo * 2))
+    print((' ' * (comprimento // 2 - len(txt) // 2) + txt)) if justificar else print(' '*recuo + txt)
+    print(decorador * (comprimento if comprimento else len(txt) + recuo * 2))
+    print(cor(limpa=True))

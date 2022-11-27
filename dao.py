@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model import Usuario
 from utils import ServerError
+from sqlalchemy.exc import OperationalError, IntegrityError
 
 
 class BancoDados():
@@ -17,7 +18,7 @@ class BancoDados():
         try:
             Session = sessionmaker(bind=create_engine(CONN, echo=False))
             return Session()
-        except:
+        except OperationalError:
             raise ServerError('Não possível acessar o servidor!')
 
 
@@ -32,17 +33,19 @@ class UsuarioDao(BancoDados):
         """
         try:
             return session.query(Usuario).filter_by(**kwargs).all()
-        except:
+        except OperationalError:
             raise ServerError('Não foi possível acessar o servidor!')
 
 
     @staticmethod
     def fazer_cadastro(session, *usuarios: Usuario):
         try:
-            session.add_all(*usuarios)
+            session.add_all(usuarios)
             session.commit()
-        except:
+        except OperationalError:
             raise ServerError('Não foi possível acessar o servidor!')
+        except IntegrityError:
+            raise ValueError('RAISE', 'Já existe um usuário cadastrado com este email')
 
 
     @staticmethod
@@ -51,8 +54,10 @@ class UsuarioDao(BancoDados):
             x = UsuarioDao.ler_dados(session, email=email_usuario)[0]
             x.senha = nova_senha
             session.commit()
-        except:
+        except OperationalError:
             raise ServerError('Não foi possível acessar o servidor!')
+        except IndexError:
+            raise ValueError('RAISE', 'Não há nenhum usuário cadastrado com este email!')
 
 
 if __name__ == '__main__':
