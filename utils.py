@@ -1,5 +1,9 @@
 import re
 import bcrypt
+import smtplib
+import email.message
+from random import choice
+import string
 
 
 class ServerError(Exception):
@@ -75,6 +79,30 @@ def comparar_senha(senha_1: str, senha_2: str) -> bool:
         True se as duas senhas forem iguais, senão False
     """
     return bcrypt.checkpw(senha_1, senha_2)
+
+
+def enviar_email(senha, de, para, assunto, corpo):  
+    try:
+        corpo_email = corpo
+
+        msg = email.message.Message()
+        msg['Subject'] = assunto # assunto
+        msg['From'] = de # remetente
+        msg['To'] = para # destinatário
+        # print(msg)
+        # print(msg['To'])
+        password = senha
+        msg.add_header('Content-Type', 'text/html')
+        msg.set_payload(corpo_email)
+
+        s = smtplib.SMTP('smtp.gmail.com: 587')
+        s.starttls()
+        # Login Credentials for sending the mail
+        s.login(msg['From'], password)
+        s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+        return True
+    except:
+        raise ValueError('RAISE', 'O email não pôde ser enviado!')
 
 
 # --------------------------------------------------

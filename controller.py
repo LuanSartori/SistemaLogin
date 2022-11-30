@@ -1,6 +1,8 @@
-from model import Usuario, Login
-from dao import UsuarioDao
+from model import Usuario, Login, RedefinirSenha
+from dao import UsuarioDao, RedefinirSenhaDao
 from utils import *
+from hashlib import sha256
+from datetime import datetime
 
 
 class UsuarioController():
@@ -44,14 +46,37 @@ class UsuarioController():
 
     @staticmethod
     def esqueci_minha_senha(email: str):
-        print(f'Link para redefinir sua senha enviado para o email {email}')
+        session = UsuarioDao.retorna_session()
 
-        # TODO: Sistema para enviar um email
+        usuario = UsuarioDao.ler_dados(session, email=email)
+        if len(usuario) == 0:
+            raise ValueError('RAISE', 'Não existe um usuário com este email cadastrado!')
+        usuario = usuario[0]
+        
+        # Gera um token para redefinir a senha e o salva no banco de dados
+        token = sha256(f'{usuario.nome}{usuario.email}{datetime.now()}'.encode()).hexdigest()
+        RedefinirSenhaDao.cadastrar_token(session, RedefinirSenha(token=token, user=usuario.id, ativado=False))
+
+        assunto = 'Redefinição de Senha'
+
+        corpo = f'''Olá {usuario.nome},
+        
+        Para redefinir a sua senha use este token: <b>{token}</b>'''
+
+        remetente = 'sistema_login@gmail.com'
+        senha = 'xxxxxxxxxxxxxxxx' # * Está senha é gerada nas configurações de segurança do email do remetente
+
+        return enviar_email(senha, remetente, email, assunto, corpo)
 
 
     @staticmethod
-    def redefinir_senha(email_usuario: str, nova_senha: str):
+    def redefinir_senha(token: str, email_usuario: str, nova_senha: str):
         session = UsuarioDao.retorna_session()
+
+        redefinir_senha = RedefinirSenhaDao.ler_dados(session, token=token)[0]
+        if redefinir_senha.ativado == True:
+            raise ValueError('RAISE', 'Este token já foi usado!')
+        usuario = UsuarioDao.ler_dados(session, id=redefinir_senha.user)[0]
 
         verifica_senha = senha_valida(nova_senha)
         if verifica_senha != True:
@@ -59,4 +84,5 @@ class UsuarioController():
         nova_senha = hash_senha(nova_senha, decode=True)
 
         UsuarioDao.redefinir_senha(session, email_usuario, nova_senha)
+        RedefinirSenhaDao.marcar_ativado(session, token, usuario, True)
         return True

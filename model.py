@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -20,3 +20,11 @@ class Login():
     
     def __str__(self) -> str:
         return self.nome
+
+
+class RedefinirSenha(Base):
+    __tablename__ = "RedefinirSenha"
+    id = Column(Integer, primary_key=True)
+    token = Column(String(64))
+    user = Column(Integer, ForeignKey('Usuario.id'))
+    ativado = Column(Boolean())

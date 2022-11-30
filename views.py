@@ -62,17 +62,28 @@ def login():
     tentativas = 0
     while True:
         try:
+            if tentativas >= 10:
+                titulo('Muitas tentativas de login foram feitas!', '*', texto='vermelho')
+                exit()
             if tentativas >= 2:
                 match str(input('{}Esqueceu sua senha?{} [{}S{}/{}N{}] '.format(
                     cor(texto='amarelo'), cor(), cor(texto='verde'), cor(), cor(texto='vermelho'), cor()
                 ))).upper().strip():
                     case 'S':
-
-                        # TODO: Email para redefinição de senha
+                        email = str(input(f'{cor(texto="amarelo")}Email para recuperação: {cor(texto="verde")}')).strip()
                         
-                        pass
+                        UsuarioController.esqueci_minha_senha(email)
+                        titulo('Email enviado com sucesso!', '-', texto='verde')
+                        tentativas = 0
+
+                        token = str(input(f'{cor(texto="amarelo")}Coloque aqui o token enviado para o seu email: {cor(texto="verde")}')).strip()
+                        nova_senha = str(input(f'{cor(texto="amarelo")}Sua nova senha: {cor(texto="verde")}')).strip()
+
+                        UsuarioController.redefinir_senha(token, email, nova_senha)
+                        titulo('Senha redefinida com sucesso!', '-', texto='verde')
+                        print(f'{cor(texto="azul")}Faça seu login...{cor()}\n\n')
                     case 'N':
-                        continue
+                        print('\n' + '-'*30 + '\n')
                     case other:
                         print()
                         titulo('Resposta inválida!', '*', comprimento=40, justificar=True, texto='vermelho')
