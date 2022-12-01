@@ -5,16 +5,18 @@ from utils import ServerError
 from sqlalchemy.exc import OperationalError, IntegrityError
 
 
+# configuração do banco de dados
+USUARIO = 'root'
+SENHA = ''
+HOST = 'localhost'
+BANCO = 'sistema_login'
+PORT = 3306
+CONN = f'mysql+pymysql://{USUARIO}:{SENHA}@{HOST}:{PORT}/{BANCO}'
+
+
 class BancoDados():
     @staticmethod
     def retorna_session():
-        USUARIO = 'root'
-        SENHA = ''
-        HOST = 'localhost'
-        BANCO = 'sistema_login'
-        PORT = 3306
-        CONN = f'mysql+pymysql://{USUARIO}:{SENHA}@{HOST}:{PORT}/{BANCO}'
-
         try:
             Session = sessionmaker(bind=create_engine(CONN, echo=False))
             return Session()

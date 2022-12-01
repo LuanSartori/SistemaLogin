@@ -70,7 +70,8 @@ def login():
                     cor(texto='amarelo'), cor(), cor(texto='verde'), cor(), cor(texto='vermelho'), cor()
                 ))).upper().strip():
                     case 'S':
-                        email = str(input(f'{cor(texto="amarelo")}Email para recuperação: {cor(texto="verde")}')).strip()
+                        titulo('Redefina sua senha', comprimento=100, justificar=True, texto='azul')
+                        email = str(input(f'{cor(texto="amarelo")}Email para redefinir a sua senha: {cor(texto="verde")}')).strip()
                         
                         UsuarioController.esqueci_minha_senha(email)
                         titulo('Email enviado com sucesso!', '-', texto='verde')

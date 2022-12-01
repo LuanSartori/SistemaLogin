@@ -59,9 +59,9 @@ class UsuarioController():
 
         assunto = 'Redefinição de Senha'
 
-        corpo = f'''Olá {usuario.nome},
-        
-        Para redefinir a sua senha use este token: <b>{token}</b>'''
+        corpo = f'''<p>Olá {usuario.nome},</p>
+        <br>
+        </p>Para redefinir a sua senha use este token: <b>{token}</b></p>'''
 
         remetente = 'sistema_login@gmail.com'
         senha = 'xxxxxxxxxxxxxxxx' # * Está senha é gerada nas configurações de segurança do email do remetente

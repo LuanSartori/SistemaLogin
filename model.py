@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
+from dao import CONN
 
 Base = declarative_base()
 
@@ -12,6 +13,14 @@ class Usuario(Base):
     senha = Column(String(80))
 
 
+class RedefinirSenha(Base):
+    __tablename__ = "RedefinirSenha"
+    id = Column(Integer, primary_key=True)
+    token = Column(String(64))
+    user = Column(Integer, ForeignKey('Usuario.id'))
+    ativado = Column(Boolean())
+
+
 class Login():
     def __init__(self, nome: str, email: str):
         self.nome = nome
@@ -22,9 +31,6 @@ class Login():
         return self.nome
 
 
-class RedefinirSenha(Base):
-    __tablename__ = "RedefinirSenha"
-    id = Column(Integer, primary_key=True)
-    token = Column(String(64))
-    user = Column(Integer, ForeignKey('Usuario.id'))
-    ativado = Column(Boolean())
+if __name__ == '__main__':
+    engine = create_engine(CONN, echo=False)
+    Base.metadata.create_all(engine)
