@@ -12,7 +12,7 @@ Para iniciar basta iniciar o banco de dados e executar o arquivo `views.py`:
 
 Depois de fazer um cadastro é só fazer o login:
 
-![Login](imgs/Login.PNG)
+![Login](imgs/login.PNG)
 
 ---
 
