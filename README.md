@@ -1,6 +1,8 @@
-# Sistema de Login
-
-Um sistema para cadastro/login de usuários feito com Python e SQL que roda pelo prompt de comando com um banco de dados hospedado no localhost
+<p align="center">
+ <img width='100px' src='https://res.cloudinary.com/dga9awrbl/image/upload/v1669985666/sistema_login.png' align='center' alt='Sistema Login'>
+ <h2 align="center">Sistema de Login</h2>
+ <p align="center">Um sistema para cadastro/login de usuários feito com Python que roda pelo prompt de comando salvando tudo em um banco de dados SQL</p>
+</p>
 
 ## Demonstração 💻
 
@@ -21,8 +23,6 @@ Caso você erre a senha por 2 ou mais vezes o sistema irá perguntar se você n�
 ![Redefinir Senha](imgs/redefinir_senha.PNG)
 ![Email Redefinir Senha](imgs/email_redefinir_senha.PNG)
 
----
-
 ## Técnico
 
 - Python 3.10.2
@@ -33,12 +33,10 @@ Caso você erre a senha por 2 ou mais vezes o sistema irá perguntar se você n�
     - SQLAlchemy 1.4.42
     - bcrypt 4.0.1
 
-- Banco de dados hospedado com XAMPP 🖧
+- Banco de dados hospedado no localhost com XAMPP 🖧
 
 ![Python](https://img.shields.io/badge/Python-306a99?style=for-the-badge&logo=python&logoColor=ffff00)
 ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
-
----
 
 ## Como usar 📝
 
